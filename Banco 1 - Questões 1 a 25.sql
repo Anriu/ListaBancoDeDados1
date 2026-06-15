@@ -266,51 +266,126 @@ LIMIT 1;
 
 
 -- Inserções para teste:
-
 -- Empresas
-INSERT INTO empresas VALUES (1, 'Azul', 'Av. Central 100', '74999990001');
-INSERT INTO empresas VALUES (2, 'Gol', 'Rua Bahia 200', '74999990002');
-INSERT INTO empresas VALUES (3, 'LATAM', 'Av. Brasil 300', '74999990003');
-INSERT INTO empresas VALUES (4, 'Avianca', 'Rua Sul 400', '74999990004');
-INSERT INTO empresas VALUES (5, 'Passaredo', 'Rua Norte 500', '74999990005');
-INSERT INTO empresas VALUES (6, 'Voepass', 'Av. Leste 600', '74999990006');
-INSERT INTO empresas VALUES (7, 'Air Europa', 'Rua Oeste 700', '74999990007');
-INSERT INTO empresas VALUES (8, 'TAP', 'Av. Portugal 800', '74999990008');
-INSERT INTO empresas VALUES (9, 'American Air', 'Rua EUA 900', '74999990009');
-INSERT INTO empresas VALUES (10, 'Air France', 'Av. Paris 1000', '74999990100');
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (1, 'Azul', 'Av. Central 100', '74999990001');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (2, 'Gol', 'Rua Bahia 200', '74999990002');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (3, 'LATAM', 'Av. Brasil 300', '74999990003');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (4, 'Avianca', 'Rua Sul 400', '74999990004');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (5, 'Passaredo', 'Rua Norte 500', '74999990005');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (6, 'Voepass', 'Av. Leste 600', '74999990006');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (7, 'Air Europa', 'Rua Oeste 700', '74999990007');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (8, 'TAP', 'Av. Portugal 800', '74999990008');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (9, 'American Air', 'Rua EUA 900', '74999990009');
+
+INSERT INTO empresas (codigo, nome, endereco, fone) 
+VALUES (10, 'Air France', 'Av. Paris 1000', '74999990100');
 
 -- Pilotos
-INSERT INTO pilotos VALUES (1001, 'Carlos Silva', 'M', '1980-03-12', '74911110001');
-INSERT INTO pilotos VALUES (1002, 'Ana Souza', 'F', '1985-07-20', '74911110002');
-INSERT INTO pilotos VALUES (1003, 'Joao Santos', 'M', '1978-09-15', '74911110003');
-INSERT INTO pilotos VALUES (1004, 'Mariana Lima', 'F', '1990-01-10', '74911110004');
-INSERT INTO pilotos VALUES (1005, 'Pedro Rocha', 'M', '1982-05-18', '74911110005');
-INSERT INTO pilotos VALUES (1006, 'Julia Alves', 'F', '1991-08-30', '74911110006');
-INSERT INTO pilotos VALUES (1007, 'Lucas Costa', 'M', '1987-11-22', '74911110007');
-INSERT INTO pilotos VALUES (1008, 'Fernanda Reis', 'F', '1984-06-14', '74911110008');
-INSERT INTO pilotos VALUES (1009, 'Rafael Gomes', 'M', '1979-04-09', '74911110009');
-INSERT INTO pilotos VALUES (1010, 'Patricia Melo', 'F', '1988-12-25', '74911110010');
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1001, 'Carlos Silva', 'M', '1980-03-12', '74911110001');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1002, 'Ana Souza', 'F', '1985-07-20', '74911110002');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1003, 'Joao Santos', 'M', '1978-09-15', '74911110003');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1004, 'Mariana Lima', 'F', '1990-01-10', '74911110004');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1005, 'Pedro Rocha', 'M', '1982-05-18', '74911110005');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1006, 'Julia Alves', 'F', '1991-08-30', '74911110006');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1007, 'Lucas Costa', 'M', '1987-11-22', '74911110007');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1008, 'Fernanda Reis', 'F', '1984-06-14', '74911110008');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1009, 'Rafael Gomes', 'M', '1979-04-09', '74911110009');
+
+INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
+VALUES (1010, 'Patricia Melo', 'F', '1988-12-25', '74911110010');
 
 -- Aviões
-INSERT INTO avioes VALUES (1, 'Boeing 737', 180, 1);
-INSERT INTO avioes VALUES (2, 'Boeing 747', 416, 2);
-INSERT INTO avioes VALUES (3, 'Airbus A320', 150, 3);
-INSERT INTO avioes VALUES (4, 'Airbus A330', 300, 4);
-INSERT INTO avioes VALUES (5, 'Boeing 777', 396, 5);
-INSERT INTO avioes VALUES (6, 'Embraer E190', 114, 6);
-INSERT INTO avioes VALUES (7, 'ATR 72', 70, 7);
-INSERT INTO avioes VALUES (8, 'Boeing 787', 242, 8);
-INSERT INTO avioes VALUES (9, 'Airbus A350', 350, 9);
-INSERT INTO avioes VALUES (10, 'Boeing 767', 269, 10);
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (1, 'Boeing 737', 180, 1);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (2, 'Boeing 747', 416, 2);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (3, 'Airbus A320', 150, 3);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (4, 'Airbus A330', 300, 4);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (5, 'Boeing 777', 396, 5);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (6, 'Embraer E190', 114, 6);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (7, 'ATR 72', 70, 7);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (8, 'Boeing 787', 242, 8);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (9, 'Airbus A350', 350, 9);
+
+INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+VALUES (10, 'Boeing 767', 269, 10);
 
 -- Voos
-INSERT INTO voos VALUES (1,  '2026-06-01 08:00:00-03', '2026-06-01 10:00:00-03', 2, 1, 1, 1001);
-INSERT INTO voos VALUES (2,  '2026-06-02 09:00:00-03', '2026-06-02 11:15:00-03', 3, 2, 2, 1002);
-INSERT INTO voos VALUES (3,  '2026-06-03 07:30:00-03', '2026-06-03 09:45:00-03', 4, 3, 3, 1003);
-INSERT INTO voos VALUES (4,  '2026-06-04 13:00:00-03', '2026-06-04 15:20:00-03', 5, 4, 4, 1004);
-INSERT INTO voos VALUES (5,  '2026-06-05 14:10:00-03', '2026-06-05 16:30:00-03', 6, 5, 5, 1005);
-INSERT INTO voos VALUES (6,  '2026-06-06 06:00:00-03', '2026-06-06 08:05:00-03', 7, 6, 6, 1006);
-INSERT INTO voos VALUES (7,  '2026-06-07 10:45:00-03', '2026-06-07 13:00:00-03', 8, 7, 7, 1007);
-INSERT INTO voos VALUES (8,  '2026-06-08 16:20:00-03', '2026-06-08 18:50:00-03', 9, 8, 8, 1008);
-INSERT INTO voos VALUES (9,  '2026-06-09 18:30:00-03', '2026-06-09 21:10:00-03', 10, 9, 9, 1009);
-INSERT INTO voos VALUES (10, '2026-06-10 05:50:00-03', '2026-06-10 08:20:00-03', 1, 10, 10, 1010);
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (1, '2026-06-01 08:00:00-03', '2026-06-01 10:00:00-03', 2, 1, 1, 1001);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (2, '2026-06-02 09:00:00-03', '2026-06-02 11:15:00-03', 3, 2, 2, 1002);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (3, '2026-06-03 07:30:00-03', '2026-06-03 09:45:00-03', 4, 3, 3, 1003);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (4, '2026-06-04 13:00:00-03', '2026-06-04 15:20:00-03', 5, 4, 4, 1004);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (5, '2026-06-05 14:10:00-03', '2026-06-05 16:30:00-03', 6, 5, 5, 1005);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (6, '2026-06-06 06:00:00-03', '2026-06-06 08:05:00-03', 7, 6, 6, 1006);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (7, '2026-06-07 10:45:00-03', '2026-06-07 13:00:00-03', 8, 7, 7, 1007);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (8, '2026-06-08 16:20:00-03', '2026-06-08 18:50:00-03', 9, 8, 8, 1008);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (9, '2026-06-09 18:30:00-03', '2026-06-09 21:10:00-03', 10, 9, 9, 1009);
+
+INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
+VALUES (10, '2026-06-10 05:50:00-03', '2026-06-10 08:20:00-03', 1, 10, 10, 1010);
