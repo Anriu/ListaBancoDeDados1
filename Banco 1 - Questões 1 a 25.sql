@@ -114,8 +114,8 @@ WHERE capacidade BETWEEN 150 AND 250;
 -- Questão 05
 SELECT nome, nascimento 
 FROM pilotos 
-WHERE sexo = 'm' 
-  AND nascimento > '1991-01-01';
+WHERE sexo = 'M' 
+  AND nascimento > '1990-12-31';
 
 -- Questão 06
 SELECT nome 
@@ -170,7 +170,7 @@ GROUP BY c.nome;
 SELECT p.nome 
 FROM pilotos p 
 JOIN voos v ON p.breve = v.pilotos 
-WHERE EXTRACT(MONTH FROM v.saida) IN (6, 7, 8);
+WHERE EXTRACT(MONTH FROM v.saida) IN (6, 7, 12);
 
 -- Questão 16
 SELECT c.nome, COUNT(*) AS quantidade_voos 
@@ -190,7 +190,7 @@ WHERE e.nome = 'LATAM';
 SELECT nome 
 FROM pilotos 
 WHERE nascimento = (
-    SELECT MAX(nascimento) 
+    SELECT MIN(nascimento) 
     FROM pilotos
 );
 
