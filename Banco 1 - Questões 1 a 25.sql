@@ -69,27 +69,27 @@ CREATE TABLE voos(
 
     -- Chave primária
     CONSTRAINT pk_voos
-    PRIMARY KEY (codigo),
+        PRIMARY KEY (codigo),
 
     -- Chave estrangeira para origem usando a chave da tabela cidades
     CONSTRAINT fk1_voos_origem
-    FOREIGN KEY (origem)
-    REFERENCES cidades(codigo),
+        FOREIGN KEY (origem)
+        REFERENCES cidades(codigo),
 
     -- Chave estrangeira para destino usando a chave da tabela cidades
     CONSTRAINT fk2_voos_destino
-    FOREIGN KEY (destino)
-    REFERENCES cidades(codigo),
+        FOREIGN KEY (destino)
+        REFERENCES cidades(codigo),
 
     -- Chave estrangeira para avioes
     CONSTRAINT fk3_voos_aviao
-    FOREIGN KEY (avioes)
-    REFERENCES avioes(codigo),
+        FOREIGN KEY (avioes)
+        REFERENCES avioes(codigo),
 
     -- Chave estrangeira para pilotos
     CONSTRAINT fk4_voos_piloto
-    FOREIGN KEY (pilotos)
-    REFERENCES pilotos(breve)
+        FOREIGN KEY (pilotos)
+        REFERENCES pilotos(breve)
 );
 
 
@@ -143,7 +143,10 @@ FROM pilotos p
 JOIN voos v ON p.breve = v.pilotos;
 
 -- Questão 11
-SELECT v.codigo, c1.nome AS origem, c2.nome AS destino 
+SELECT 
+    v.codigo,
+    c1.nome AS origem,
+    c2.nome AS destino 
 FROM voos v 
 JOIN cidades c1 ON v.origem = c1.codigo 
 JOIN cidades c2 ON v.destino = c2.codigo;
