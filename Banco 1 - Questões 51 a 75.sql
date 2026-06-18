@@ -1,4 +1,4 @@
--- Banco 3 - Veterinária
+-- Banco 3 - Veterinaria
 
 -- Tabela medicos_veterinarios
 CREATE TABLE medicos_veterinarios(
@@ -6,7 +6,7 @@ CREATE TABLE medicos_veterinarios(
 	nome CHAR(40) NOT NULL,
 	telefone CHAR(14) NULL,
 
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_medicos_veterinarios
 		PRIMARY KEY(codigo)
 );
@@ -18,7 +18,7 @@ CREATE TABLE proprietarios(
 	endereco CHAR(40) NULL,
 	telefone DECIMAL(10,0) NULL, 
 
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_proprietarios
 		PRIMARY KEY(codigo)
 );
@@ -28,7 +28,7 @@ CREATE TABLE cores(
 	codigo SMALLINT NOT NULL, 
 	nome CHAR(20) NOT NULL,
 
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_cores
 		PRIMARY KEY(codigo)
 );
@@ -38,7 +38,7 @@ CREATE TABLE racas(
 	codigo SMALLINT NOT NULL,
 	nome CHAR(30) NOT NULL,
 
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_racas
 		PRIMARY KEY(codigo)
 );
@@ -49,7 +49,7 @@ CREATE TABLE medicamentos(
 	nome VARCHAR(50) NOT NULL,
 	preco DECIMAL(5,2) NULL,
 	
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_medicamentos
 		PRIMARY KEY(codigo)
 );
@@ -65,7 +65,7 @@ CREATE TABLE animais(
 	raca SMALLINT NOT NULL,
 	proprietario INTEGER NOT NULL,
 	
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_animais
 		PRIMARY KEY(codigo),
 
@@ -94,7 +94,7 @@ CREATE TABLE atendimentos(
 	animal INTEGER NULL,
 	medico INTEGER NOT NULL,
 
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_atendimentos
 		PRIMARY KEY(codigo),
 
@@ -114,7 +114,7 @@ CREATE TABLE prescricoes(
 	atendimento INTEGER NOT NULL,
 	quantidade SMALLINT NOT NULL, 
 	
-	-- Chave primária
+	-- Chave primaria
 	CONSTRAINT pk_prescricoes
         PRIMARY KEY (medicamento, atendimento),
 
@@ -128,56 +128,56 @@ CREATE TABLE prescricoes(
         REFERENCES atendimentos(codigo)
 );
 
--- Questão 51
+-- Questao 51
 SELECT *
 FROM medicos_veterinarios
 ORDER BY nome ASC;
 
--- Questão 52
+-- Questao 52
 SELECT nome, preco
 FROM medicamentos
 WHERE preco BETWEEN 20.00 and 100.00;
 
--- Questão 53
+-- Questao 53
 SELECT nome
 FROM animais
-WHERE nome ILIKE 'R%'
-	OR nome ILIKE '%O';
+WHERE TRIM(nome) ILIKE 'R%'
+	OR TRIM(nome) ILIKE '%O';
 	
--- Questão 54
+-- Questao 54
 SELECT *
 FROM proprietarios
 WHERE telefone IS NULL 
 	OR endereco IS NULL;
 	
--- Questão 55
+-- Questao 55
 SELECT *
 FROM animais
 WHERE nascimento >= '2020-01-01';
 
--- Questão 56
+-- Questao 56
 SELECT nome
 FROM racas
-WHERE nome ILIKE '_A%';
+WHERE TRIM(nome) ILIKE '_A%';
 
--- Questão 57
+-- Questao 57
 SELECT COUNT(*)
 FROM atendimentos
 WHERE preco > 150.00;
 
 
--- Questão 58
+-- Questao 58
 SELECT nome, preco
 FROM medicamentos
 ORDER BY preco DESC
 LIMIT 5;
 
--- Questão 59
+-- Questao 59
 SELECT a.nome AS nome_animal, r.nome AS nome_raca
 FROM animais a
 JOIN racas r ON a.raca = r.codigo;
 
--- Questão 60
+-- Questao 60
 SELECT
 	aten.data_hora AS data_hora,
 	a.nome AS nome_animal,
@@ -186,24 +186,26 @@ FROM atendimentos aten
 JOIN animais a ON aten.animal = a.codigo
 JOIN medicos_veterinarios m ON aten.medico = m.codigo;
 
--- Questão 61
+-- Questao 61
 SELECT 
-	a.nome AS nome_animal,
-	p.nome AS nome_proprietario,
-	r.nome AS nome_raca
+    a.nome AS nome_animal,
+    p.nome AS nome_proprietario,
+    r.nome AS nome_raca,
+    c.nome AS nome_cor
 FROM animais a
 JOIN proprietarios p ON a.proprietario = p.codigo
-JOIN racas r ON a.raca = r.codigo;
+JOIN racas r ON a.raca = r.codigo
+JOIN cores c ON a.cor = c.codigo;
 
--- Questão 62
-SELECT 
-	m.nome AS nome_medico,
-	COUNT(a.codigo) AS quantidade_total
+-- Questao 62
+SELECT
+    m.nome AS nome_medico,
+    COUNT(a.codigo) AS quantidade_total
 FROM medicos_veterinarios m
-JOIN atendimentos a ON a.medico = m.codigo
+LEFT JOIN atendimentos a ON a.medico = m.codigo
 GROUP BY m.codigo, m.nome;
 
--- Questão 63
+-- Questao 63
 SELECT 
 	a.nome AS nome_animal,
 	SUM(aten.preco) AS valor_total
@@ -211,31 +213,33 @@ FROM animais a
 JOIN atendimentos aten ON aten.animal = a.codigo
 GROUP BY a.codigo, a.nome;
 
--- Questão 64
+-- Questao 64
 SELECT r.nome
 FROM racas r
 JOIN animais a ON a.raca = r.codigo
 GROUP BY r.codigo, r.nome
 HAVING COUNT(a.raca) > 10;
 
--- Questão 65
+
+-- Questao 65
 SELECT DISTINCT p.nome
 FROM proprietarios p
 JOIN animais a ON a.proprietario = p.codigo
 JOIN cores c ON a.cor = c.codigo
 WHERE c.nome IN ('Branco', 'Preto');
 
--- Questão 66
+-- Questao 66
 SELECT 
-	aten.data_hora AS data_atendimento,
-	a.nome AS nome_animal,
-	m.nome AS nome_medicamento
+    aten.data_hora AS data_atendimento,
+    TRIM(a.nome) AS nome_animal,
+    m.nome AS nome_medicamento
 FROM atendimentos aten
 JOIN animais a ON aten.animal = a.codigo
 JOIN prescricoes p ON aten.codigo = p.atendimento
 JOIN medicamentos m ON p.medicamento = m.codigo;
+
 	
--- Questão 67
+-- Questao 67
 SELECT 
     r.nome AS nome_raca,
     COUNT(aten.codigo) AS total_atendimentos
@@ -245,16 +249,16 @@ LEFT JOIN atendimentos aten ON aten.animal = a.codigo
 GROUP BY r.codigo, r.nome
 ORDER BY total_atendimentos DESC;
 
--- Questão 68
-SELECT
-	m.nome AS nome_medico,
-	m.telefone AS telefone_medico
+-- Questao 68
+SELECT DISTINCT
+    m.nome AS nome_medico,
+    m.telefone AS telefone_medico
 FROM medicos_veterinarios m
 JOIN atendimentos aten ON aten.medico = m.codigo
 WHERE aten.preco = (SELECT MAX(preco) FROM atendimentos);
  
 
--- Questão 69
+-- Questao 69
 SELECT p.nome
 FROM proprietarios p
 WHERE p.codigo IN (
@@ -263,18 +267,18 @@ WHERE p.codigo IN (
     WHERE a.raca IN (
         SELECT r.codigo
         FROM racas r
-        WHERE r.nome IN ('Poodle', 'Pastor Alemao')
+        WHERE TRIM(r.nome) IN ('Poodle', 'Pastor Alemao')
     )
 );
 
--- Questão 70
+-- Questao 70
 SELECT a.nome AS nome_animal
 FROM animais a
-JOIN atendimentos aten ON aten.animal = a.codigo
+LEFT JOIN atendimentos aten ON aten.animal = a.codigo
 WHERE aten.codigo IS NULL
 ORDER BY a.nome;
 
--- Questão 71
+-- Questao 71
 SELECT m.nome, m.preco
 FROM medicamentos m
 WHERE m.preco > (
@@ -285,21 +289,29 @@ WHERE m.preco > (
     WHERE EXTRACT(YEAR FROM a.data_hora) = EXTRACT(YEAR FROM CURRENT_DATE)
 );
 
--- Questão 72
-SELECT 
-    p.nome AS nome_proprietario,
-    COALESCE(SUM(aten.preco), 0) + COALESCE(SUM(p_med.preco * presc.quantidade), 0) AS total_gasto
+-- Questao 72
+SELECT p.nome
 FROM proprietarios p
-JOIN animais a ON a.proprietario = p.codigo
-JOIN atendimentos aten ON aten.animal = a.codigo
-LEFT JOIN prescricoes presc ON presc.atendimento = aten.codigo
-LEFT JOIN medicamentos p_med ON p_med.codigo = presc.medicamento
-GROUP BY p.codigo, p.nome
-ORDER BY total_gasto DESC
+ORDER BY (
+    (
+        SELECT COALESCE(SUM(aten.preco), 0)
+        FROM animais a
+        LEFT JOIN atendimentos aten ON aten.animal = a.codigo
+        WHERE a.proprietario = p.codigo
+    ) + 
+    (
+        SELECT COALESCE(SUM(m.preco * pr.quantidade), 0)
+        FROM animais a
+        JOIN atendimentos aten ON aten.animal = a.codigo
+        JOIN prescricoes pr ON pr.atendimento = aten.codigo
+        JOIN medicamentos m ON pr.medicamento = m.codigo
+        WHERE a.proprietario = p.codigo
+    )
+) DESC
 LIMIT 1;
 
 
--- Questão 73
+-- Questao 73
 SELECT 
     aten.codigo,
     aten.data_hora,
@@ -311,7 +323,7 @@ WHERE aten.preco > (
     WHERE a.medico = aten.medico
 );
 
--- Questão 74
+-- Questao 74
 SELECT 
     p.nome AS nome_proprietario,
     COUNT(a.codigo) AS quantidade_animais
@@ -320,7 +332,7 @@ JOIN animais a ON a.proprietario = p.codigo
 GROUP BY p.codigo, p.nome
 HAVING COUNT(a.codigo) > 3;
 
--- Questão 75
+-- Questao 75
 SELECT 
     m.nome,
     SUM(p.quantidade) AS total_receitado
@@ -336,8 +348,8 @@ ORDER BY total_receitado DESC
 LIMIT 1;
 
 
---Inserções para teste
--- Médicos Veterinários
+--Insercoes para teste
+-- Medicos Veterinarios
 INSERT INTO medicos_veterinarios (codigo, nome, telefone) 
 VALUES (1, 'Carlos Eduardo', '74999910001');
 
@@ -368,7 +380,7 @@ VALUES (9, 'Gabriel Rocha', '74999910009');
 INSERT INTO medicos_veterinarios (codigo, nome, telefone)
 VALUES (10, 'Patricia Melo', '74999910010');
 
--- Proprietários
+-- Proprietarios
 INSERT INTO proprietarios (codigo, nome, endereco, telefone)
 VALUES (101, 'Joao Santos', 'Rua das Flores, 45', 7436111001);
 
@@ -440,7 +452,7 @@ VALUES (9, 'Tigrado');
 INSERT INTO cores (codigo, nome)
 VALUES (10, 'Azul Russo');
 
--- Raças
+-- Racas
 INSERT INTO racas (codigo, nome)
 VALUES (1, 'Vira-lata (SRD)');
 
@@ -516,7 +528,7 @@ INSERT INTO animais (codigo, nome, nascimento, cor, raca, proprietario)
 VALUES (1004, 'Rex', '2018-01-05', 1, 1, 104);
 
 INSERT INTO animais (codigo, nome, nascimento, cor, raca, proprietario)
-VALUES (1005, 'Mia', '2023-05-18', 4, 6, 105);
+VALUES (1023, 'Mia', '2023-05-18', 4, 6, 105);
 
 INSERT INTO animais (codigo, nome, nascimento, cor, raca, proprietario)
 VALUES (1006, 'Bob', '2021-11-22', 6, 7, 106);
@@ -547,7 +559,7 @@ INSERT INTO atendimentos (codigo, data_hora, descricao, preco, animal, medico)
 VALUES (2004, '2026-06-15 14:00:00', 'Sutura de ferimento na pata traseira', 220.00, 1004, 4);
 
 INSERT INTO atendimentos (codigo, data_hora, descricao, preco, animal, medico)
-VALUES (2005, '2026-06-15 15:20:00', 'Exame dermatologico e coleta de sangue', 130.00, 1005, 5);
+VALUES (2005, '2026-06-15 15:20:00', 'Exame dermatologico e coleta de sangue', 130.00, 1023, 5);
 
 INSERT INTO atendimentos (codigo, data_hora, descricao, preco, animal, medico)
 VALUES (2006, '2026-06-15 16:45:00', 'Aplicacao de antialergico intravenoso', 95.00, 1006, 6);
@@ -564,7 +576,7 @@ VALUES (2009, '2026-06-15 19:00:00', 'Ultrassonografia abdominal preventiva', 25
 INSERT INTO atendimentos (codigo, data_hora, descricao, preco, animal, medico)
 VALUES (2010, '2026-06-15 20:00:00', 'Consulta para controle de obesidade', 150.00, 1010, 10);
 
--- Prescrições
+-- Prescricoes
 INSERT INTO prescricoes (medicamento, atendimento, quantidade)
 VALUES (504, 2001, 1);
 
@@ -594,8 +606,3 @@ VALUES (501, 2007, 2);
 
 INSERT INTO prescricoes (medicamento, atendimento, quantidade)
 VALUES (508, 2010, 1);
-
-
-
-
-

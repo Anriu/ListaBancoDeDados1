@@ -5,7 +5,7 @@ CREATE TABLE tamanhos(
     codigo SMALLINT NOT NULL,
     nome CHAR(10) NOT NULL,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_tamanhos
         PRIMARY KEY (codigo)
 );
@@ -15,7 +15,7 @@ CREATE TABLE pizza(
     codigo INTEGER NOT NULL,
     nome CHAR(30) NOT NULL,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_pizza
         PRIMARY KEY (codigo)
 );
@@ -26,7 +26,7 @@ CREATE TABLE bairros(
     nome CHAR(25) NOT NULL,
     populacao INTEGER,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_bairros
         PRIMARY KEY (codigo)
 );
@@ -40,7 +40,7 @@ CREATE TABLE clientes(
     sexo CHAR(1),
     nascimento DATE,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_clientes
         PRIMARY KEY (fone),
 
@@ -56,7 +56,7 @@ CREATE TABLE pedidos(
     cliente VARCHAR(8) NOT NULL,
     diahora TIMESTAMP,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_pedidos
         PRIMARY KEY (numero),
 
@@ -74,7 +74,7 @@ CREATE TABLE itens_pedidos(
     quantidade SMALLINT NOT NULL,
     valorunitario DECIMAL(4,2),
 
-    -- Chave primária composta
+    -- Chave primaria composta
     CONSTRAINT pk_itens_pedidos
         PRIMARY KEY (pizza, tamanho, pedido),
 
@@ -94,58 +94,59 @@ CREATE TABLE itens_pedidos(
         REFERENCES pizza(codigo)
 );
 
--- Questão 26
+-- Questao 26
 SELECT codigo, nome
 FROM pizza
 ORDER BY nome ASC;
 
--- Questão 27
+-- Questao 27
 SELECT nome
 FROM clientes
-WHERE nome ILIKE '%w%';
+WHERE TRIM(nome) ILIKE '%w%';
 
--- Questão 28
+-- Questao 28
+BEGIN;
 DELETE FROM pizza 
 WHERE nome ILIKE '%CALABRESA%' 
    OR nome ILIKE '%CALABREZA%';
-   
--- Questão 29
+ROLLBACK;
+
+-- Questao 29
 SELECT numero, diahora 
 FROM pedidos 
-WHERE diahora BETWEEN '2026-01-01 00:00:00' AND '2026-12-31 23:59:59';
+WHERE EXTRACT(YEAR FROM diahora) = 2026;
 
--- Questão 30
+-- Questao 30
 SELECT nome, populacao
 FROM bairros
 WHERE populacao < 50000;
 
--- Questão 31
+-- Questao 31
 SELECT nome, fone
 FROM clientes
 WHERE sexo = 'F' 
 	AND EXTRACT(YEAR FROM nascimento) BETWEEN 1980 and 1989;	
 	
--- Questão 32
+-- Questao 32
 SELECT COUNT(DISTINCT nome) AS total_tamanhos
 FROM tamanhos;
 
--- Questão 33
-SELECT * 
-FROM itens_pedidos
+-- Questao 33
+SELECT * FROM itens_pedidos
 WHERE quantidade = 1
 	OR quantidade > 5;
 	
--- Questão 34
+-- Questao 34
 SELECT c.nome AS cliente, b.nome AS bairro
 FROM clientes c
 JOIN bairros b ON c.bairro = b.codigo;
 
--- Questão 35
+-- Questao 35
 SELECT ip.pedido AS numero_pedido, p.nome AS nome_pizza, ip.quantidade
 FROM itens_pedidos ip
 JOIN pizza p ON ip.pizza = p.codigo;
 
--- Questão 36
+-- Questao 36
 SELECT 
     ip.pedido AS numero_pedido, 
     c.nome AS nome_cliente, 
@@ -158,46 +159,50 @@ JOIN pedidos ped ON ip.pedido = ped.numero
 JOIN clientes c ON ped.cliente = c.fone;
 
 
--- Questão 37
+-- Questao 37
 SELECT pedido, SUM(quantidade * valorunitario) AS valor_total_pedido
 FROM itens_pedidos
 GROUP BY pedido;
 
--- Questão 38
+-- Questao 38
 SELECT b.nome AS bairro, COUNT(c.fone) AS total_clientes
 FROM bairros b
 LEFT JOIN clientes c ON b.codigo = c.bairro
 GROUP BY b.nome;
 
--- Questão 39
+-- Questao 39
 SELECT p.nome AS pizza_nome
 FROM pizza p
 JOIN itens_pedidos ip ON p.codigo = ip.pizza
-GROUP BY p.nome
+GROUP BY p.codigo, p.nome
 HAVING SUM(ip.quantidade) > 50;
 
--- Questão 40
-SELECT c.nome AS nome_cliente, p.diahora AS dia_hora
+-- Questao 40
+SELECT 
+	c.nome AS nome_cliente,
+	p.diahora AS dia_hora
 FROM pedidos p
-JOIN clientes c ON p.cliente = c.fone
+JOIN clientes c ON TRIM(p.cliente) = TRIM(c.fone)
 WHERE EXTRACT(DAY FROM p.diahora) = EXTRACT(DAY FROM c.nascimento)
 	AND EXTRACT(MONTH FROM p.diahora) = EXTRACT(MONTH FROM c.nascimento);
 
--- Questão 41
-SELECT p.nome AS nome_pizza, COUNT(ip.pizza) AS total_vezes_pedida
+-- Questao 41
+SELECT 
+	p.nome AS nome_pizza, 
+	SUM(COALESCE(ip.quantidade, 0)) AS total_vezes_pedida
 FROM pizza p
 LEFT JOIN itens_pedidos ip ON p.codigo = ip.pizza
-GROUP BY p.nome;
+GROUP BY p.codigo, p.nome;
 
--- Questão 42
+-- Questao 42
 SELECT DISTINCT c.nome AS nome_cliente
 FROM clientes c
 JOIN bairros b ON c.bairro = b.codigo
-JOIN pedidos p ON c.fone = p.cliente
-WHERE b.nome ILIKE 'Centro'
+JOIN pedidos p ON TRIM(c.fone) = TRIM(p.cliente)
+WHERE TRIM(b.nome) ILIKE 'Centro'
 	AND EXTRACT(DOW FROM p.diahora) = 0;
 
--- Questão 43
+-- Questao 43
 SELECT c.nome
 FROM clientes c
 JOIN pedidos p ON c.fone = p.cliente
@@ -206,8 +211,8 @@ GROUP BY p.numero, c.nome
 ORDER BY SUM(ip.quantidade * ip.valorunitario) DESC
 LIMIT 1;
 
--- Questão 44
-SELECT DISTINCT b.nome AS nome_bairro
+-- Questao 44
+SELECT DISTINCT TRIM(b.nome) AS nome_bairro
 FROM bairros b
 JOIN clientes c ON b.codigo = c.bairro
 JOIN pedidos p ON TRIM(c.fone) = TRIM(p.cliente)
@@ -216,7 +221,7 @@ JOIN tamanhos t ON ip.tamanho = t.codigo
 WHERE TRIM(t.nome) ILIKE 'Gigante'
    OR TRIM(t.nome) ILIKE 'Super';
 
--- Questão 45
+-- Questao 45
 SELECT c.nome AS nome_clientes
 FROM bairros b
 JOIN clientes c ON b.codigo = c.bairro
@@ -225,17 +230,18 @@ WHERE b.populacao > 200000
   AND p.numero IS NULL;
 
 
--- Questão 46
+-- Questao 46
 SELECT pedido, pizza
 FROM itens_pedidos ip
-WHERE valorunitario < (
-    SELECT AVG(valorunitario)
-    FROM itens_pedidos
-    WHERE pizza = ip.pizza
+WHERE ip.valorunitario < (
+    SELECT AVG(ip2.valorunitario)
+    FROM itens_pedidos ip2
+    WHERE ip2.pizza = ip.pizza
+      AND ip2.pedido <> ip.pedido
 );
 
--- Questão 47
-SELECT b.nome
+-- Questao 47
+SELECT TRIM(b.nome) AS nome_bairro
 FROM bairros b
 JOIN clientes c ON b.codigo = c.bairro
 JOIN pedidos p ON TRIM(c.fone) = TRIM(p.cliente)
@@ -244,25 +250,26 @@ GROUP BY b.codigo, b.nome
 ORDER BY SUM(ip.quantidade * ip.valorunitario) DESC
 LIMIT 1;
 
--- Questão 48
-SELECT pi.nome
-FROM pizza pi
-JOIN itens_pedidos ip ON pi.codigo = ip.pizza
-GROUP BY pi.codigo, pi.nome
+-- Questao 48
+SELECT p.nome
+FROM pizza p
+JOIN itens_pedidos ip ON p.codigo = ip.pizza
+GROUP BY p.codigo, p.nome
 HAVING MIN(ip.valorunitario) > (
-    SELECT AVG(valorunitario) 
+    SELECT AVG(valorunitario)
     FROM itens_pedidos
 );
 
--- Questão 49
-SELECT DISTINCT b.nome
+
+-- Questao 49
+SELECT DISTINCT TRIM(b.nome) AS nome_bairro
 FROM bairros b
 JOIN clientes c ON b.codigo = c.bairro
 JOIN pedidos p ON TRIM(c.fone) = TRIM(p.cliente)
 WHERE c.sexo = 'M'
-  AND CAST(EXTRACT(DAY FROM p.diahora) AS INTEGER) % 2 <> 0;
+  AND CAST(EXTRACT(ISODOW FROM p.diahora) AS INTEGER) % 2 <> 0;
   
--- Questão 50
+-- Questao 50
 SELECT c.nome, SUM(ip.quantidade) AS quantidade_total
 FROM clientes c
 JOIN pedidos p ON TRIM(c.fone) = TRIM(p.cliente)
@@ -272,18 +279,17 @@ ORDER BY quantidade_total DESC
 LIMIT 3;
 
 
-
--- Inserções para teste
+-- Insercoes para teste
 
 -- Bairros
 INSERT INTO bairros (codigo, nome, populacao)
 VALUES (1, 'Centro', 15000);
 
 INSERT INTO bairros (codigo, nome, populacao)
-VALUES (2, 'Altos do Irecê', 4500);
+VALUES (2, 'Altos do Irece', 4500);
 
 INSERT INTO bairros (codigo, nome, populacao)
-VALUES (3, 'Paraíso', 8200);
+VALUES (3, 'Paraiso', 8200);
 
 INSERT INTO bairros (codigo, nome, populacao)
 VALUES (4, 'Morada do Sol', 6100);
@@ -292,7 +298,7 @@ INSERT INTO bairros (codigo, nome, populacao)
 VALUES (5, 'Novo Horizonte', 7400);
 
 INSERT INTO bairros (codigo, nome, populacao)
-VALUES (6, 'São Francisco', 9300);
+VALUES (6, 'Sao Francisco', 9300);
 
 INSERT INTO bairros (codigo, nome, populacao)
 VALUES (7, 'Boa Vista', 5200);
@@ -304,7 +310,7 @@ INSERT INTO bairros (codigo, nome, populacao)
 VALUES (9, 'Vivendas', 2900);
 
 INSERT INTO bairros (codigo, nome, populacao)
-VALUES (10, 'Baixão de Sinésia', 4100);
+VALUES (10, 'Baixao de Sinesia', 4100);
 
 -- Tamanho das pizzas
 INSERT INTO tamanhos (codigo, nome)
@@ -369,7 +375,7 @@ INSERT INTO clientes (fone, nome, bairro, endereco, sexo, nascimento)
 VALUES ('33210012', 'Matheus William', 3, 'Av. Santos Dumont, 88', 'M', '1987-02-14');
 
 INSERT INTO clientes (fone, nome, endereco, sexo, nascimento, bairro)
-VALUES ('99991111', 'Maria Santos', 'Rua Padrão, 0', 'F', '1990-05-15', 1);
+VALUES ('99991111', 'Maria Santos', 'Rua Padrao, 0', 'F', '1990-05-15', 1);
 
 -- Sabores Pizza
 INSERT INTO pizza (codigo, nome)

@@ -1,16 +1,15 @@
 -- Banco 1
 
 --Tabala de Empresa
-
 CREATE TABLE empresas(
     codigo INTEGER NOT NULL,
     nome VARCHAR(30) NOT NULL,
     endereco VARCHAR(40) NOT NULL,
     fone VARCHAR(14) NOT NULL,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_empresas
-    PRIMARY KEY (codigo)
+    	PRIMARY KEY (codigo)
 );
 
 --Tabela de Pilotos
@@ -21,9 +20,9 @@ CREATE TABLE pilotos(
     nascimento DATE NOT NULL,
     fone CHAR(14) NOT NULL,
 
-    --Chave primária
+    --Chave primaria
     CONSTRAINT pk_pilotos
-    PRIMARY KEY(breve)
+    	PRIMARY KEY(breve)
 );
 
 CREATE TABLE cidades(
@@ -31,12 +30,12 @@ CREATE TABLE cidades(
     nome CHAR(15) NOT NULL,
     populacao DOUBLE PRECISION NOT NULL,
 
-    --Chave primária
+    --Chave primaria
     CONSTRAINT pk_cidades
-    PRIMARY KEY(codigo)
+    	PRIMARY KEY(codigo)
 );
 
---Tabela de aviões
+--Tabela de avioes
 CREATE TABLE avioes(
     codigo INTEGER NOT NULL,
     modelo CHAR(20) NOT NULL,
@@ -45,14 +44,14 @@ CREATE TABLE avioes(
     --Para chaves estrangeiras
     empresas INTEGER NOT NULL,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_avioes
-    PRIMARY KEY (codigo),
+    	PRIMARY KEY (codigo),
 
     -- Chave estrangeira para empresas
     CONSTRAINT fk_avioes_empresas
-    FOREIGN KEY (empresas)
-    REFERENCES empresas(codigo)
+    	FOREIGN KEY (empresas)
+    	REFERENCES empresas(codigo)
 );
 
 --Tabela de voos
@@ -67,7 +66,7 @@ CREATE TABLE voos(
     avioes INTEGER NOT NULL,
     pilotos INTEGER NOT NULL,
 
-    -- Chave primária
+    -- Chave primaria
     CONSTRAINT pk_voos
         PRIMARY KEY (codigo),
 
@@ -93,56 +92,57 @@ CREATE TABLE voos(
 );
 
 
--- Questão 01
-SELECT * FROM empresas;
+-- Questao 01
+SELECT codigo, nome, endereco, fone
+FROM empresas;
 
--- Questão 02
+-- Questao 02
 SELECT modelo 
 FROM avioes 
 WHERE modelo ILIKE 'Boeing%';
 
--- Questão 03
+-- Questao 03
 SELECT nome, fone 
 FROM empresas 
 WHERE fone IS NOT NULL;
 
--- Questão 04
+-- Questao 04
 SELECT codigo, modelo 
 FROM avioes 
 WHERE capacidade BETWEEN 150 AND 250;
 
--- Questão 05
+-- Questao 05
 SELECT nome, nascimento 
 FROM pilotos 
 WHERE sexo = 'M' 
   AND nascimento > '1990-12-31';
 
--- Questão 06
+-- Questao 06
 SELECT nome 
 FROM pilotos 
-WHERE nome ILIKE '%a_';
+WHERE TRIM(nome) ILIKE '%a_';
 
--- Questão 07
+-- Questao 07
 SELECT nome, populacao 
 FROM cidades 
 ORDER BY populacao DESC;
 
--- Questão 08
+-- Questao 08
 SELECT COUNT(*) 
 FROM avioes 
 WHERE capacidade > 300;
 
--- Questão 09
+-- Questao 09
 SELECT a.modelo, e.nome 
 FROM avioes a 
 JOIN empresas e ON a.empresas = e.codigo;
 
--- Questão 10
+-- Questao 10
 SELECT p.nome, v.saida 
 FROM pilotos p 
 JOIN voos v ON p.breve = v.pilotos;
 
--- Questão 11
+-- Questao 11
 SELECT 
     v.codigo,
     c1.nome AS origem,
@@ -151,37 +151,43 @@ FROM voos v
 JOIN cidades c1 ON v.origem = c1.codigo 
 JOIN cidades c2 ON v.destino = c2.codigo;
 
--- Questão 12
-SELECT e.nome, COUNT(*) 
+-- Questao 12
+SELECT 
+	e.nome AS nome_empresa,
+	COUNT(a.codigo) AS total_avioes 
 FROM empresas e 
 JOIN avioes a ON a.empresas = e.codigo 
-GROUP BY e.nome;
+GROUP BY e.codigo, e.nome;
 
--- Questão 13
-SELECT modelo, ROUND(AVG(capacidade), 2) AS capacidade_media 
+-- Questao 13
+SELECT
+	modelo,
+	ROUND(AVG(capacidade), 2) AS capacidade_media 
 FROM avioes 
-WHERE capacidade > 100 
-GROUP BY modelo;
+GROUP BY modelo
+HAVING AVG(capacidade) > 100;
 
--- Questão 14
+-- Questao 14
 SELECT c.nome AS cidade, COUNT(*) AS quantidade_voos 
 FROM voos v 
 JOIN cidades c ON v.origem = c.codigo 
 GROUP BY c.nome;
 
--- Questão 15
+-- Questao 15
 SELECT p.nome 
 FROM pilotos p 
 JOIN voos v ON p.breve = v.pilotos 
 WHERE EXTRACT(MONTH FROM v.saida) IN (6, 7, 12);
 
--- Questão 16
-SELECT c.nome, COUNT(*) AS quantidade_voos 
-FROM cidades c 
-JOIN voos v ON c.codigo = v.origem 
-GROUP BY c.nome;
+-- Questao 16
+SELECT
+    c.nome,
+    COUNT(v.codigo) AS quantidade_voos
+FROM cidades c
+LEFT JOIN voos v ON c.codigo = v.origem
+GROUP BY c.codigo, c.nome;
 
--- Questão 17
+-- Questao 17
 SELECT DISTINCT p.nome 
 FROM pilotos p 
 JOIN voos v ON p.breve = v.pilotos 
@@ -189,37 +195,36 @@ JOIN avioes a ON v.avioes = a.codigo
 JOIN empresas e ON a.empresas = e.codigo 
 WHERE e.nome = 'LATAM';
 
--- Questão 18
+-- Questao 18
 SELECT nome 
-FROM pilotos 
-WHERE nascimento = (
-    SELECT MIN(nascimento) 
-    FROM pilotos
-);
+FROM pilotos
+ORDER BY nascimento ASC 
+LIMIT 1;
 
--- Questão 19
+-- Questao 19
 SELECT e.nome
 FROM empresas e
 JOIN avioes a ON e.codigo = a.empresas
 GROUP BY e.codigo, e.nome
-HAVING COUNT(*) > (
+HAVING COUNT(a.codigo) > (
     SELECT AVG(qtd)
     FROM (
-        SELECT COUNT(*) AS qtd
-        FROM avioes
-        GROUP BY empresas
+        SELECT COUNT(a2.codigo) AS qtd
+        FROM avioes a2
+        GROUP BY a2.empresas
     ) AS medias
 );
 
--- Questão 20
+-- Questao 20
 SELECT c.nome
 FROM cidades c
 JOIN voos v ON c.codigo = v.destino
 JOIN pilotos p ON p.breve = v.pilotos
 GROUP BY c.codigo, c.nome
-HAVING COUNT(CASE WHEN p.sexo = 'M' THEN 1 END) = 0;
+HAVING COUNT(CASE WHEN p.sexo = 'M' THEN 1 END) = 0
+	AND COUNT(CASE WHEN p.sexo = 'F' THEN 1 END) > 0;
 
--- Questão 21
+-- Questao 21
 SELECT a.modelo, a.capacidade
 FROM avioes a
 WHERE a.capacidade > (
@@ -228,7 +233,7 @@ WHERE a.capacidade > (
     WHERE a2.empresas = a.empresas
 );
 
--- Questão 22
+-- Questao 22
 SELECT p.nome
 FROM pilotos p
 WHERE NOT EXISTS (
@@ -237,7 +242,7 @@ WHERE NOT EXISTS (
     WHERE v.pilotos = p.breve
 );
 
--- Questão 23
+-- Questao 23
 SELECT c.nome
 FROM cidades c
 WHERE NOT EXISTS (
@@ -248,8 +253,10 @@ WHERE NOT EXISTS (
 ORDER BY c.populacao DESC
 LIMIT 1;
 
--- Questão 24
-SELECT v.codigo, p.nome AS piloto
+-- Questao 24
+SELECT
+	v.codigo AS codigo_voo,
+	p.nome AS piloto
 FROM voos v
 JOIN pilotos p ON v.pilotos = p.breve
 WHERE (v.chegada - v.saida) > (
@@ -257,7 +264,7 @@ WHERE (v.chegada - v.saida) > (
     FROM voos
 );
 
--- Questão 25
+-- Questao 25
 SELECT p.nome
 FROM pilotos p
 JOIN voos v ON p.breve = v.pilotos
@@ -267,10 +274,9 @@ LIMIT 1;
 
 
 
-
--- Inserções para teste:
+-- Insercoes para teste:
 -- Empresas
-INSERT INTO empresas (codigo, nome, endereco, fone) 
+INSERT INTO empresas (codigo, nome, address, fone) 
 VALUES (1, 'Azul', 'Av. Central 100', '74999990001');
 
 INSERT INTO empresas (codigo, nome, endereco, fone) 
@@ -331,35 +337,35 @@ VALUES (1009, 'Rafael Gomes', 'M', '1979-04-09', '74911110009');
 INSERT INTO pilotos (breve, nome, sexo, nascimento, fone) 
 VALUES (1010, 'Patricia Melo', 'F', '1988-12-25', '74911110010');
 
--- Aviões
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+-- Avioes
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (1, 'Boeing 737', 180, 1);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (2, 'Boeing 747', 416, 2);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (3, 'Airbus A320', 150, 3);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (4, 'Airbus A330', 300, 4);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (5, 'Boeing 777', 396, 5);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (6, 'Embraer E190', 114, 6);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (7, 'ATR 72', 70, 7);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (8, 'Boeing 787', 242, 8);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (9, 'Airbus A350', 350, 9);
 
-INSERT INTO avioes (codigo, modelo, capacity, empresas) 
+INSERT INTO avioes (codigo, modelo, capacidade, empresas) 
 VALUES (10, 'Boeing 767', 269, 10);
 
 -- Voos
@@ -392,3 +398,38 @@ VALUES (9, '2026-06-09 18:30:00-03', '2026-06-09 21:10:00-03', 10, 9, 9, 1009);
 
 INSERT INTO voos (codigo, saida, chegada, destino, origem, avioes, pilotos) 
 VALUES (10, '2026-06-10 05:50:00-03', '2026-06-10 08:20:00-03', 1, 10, 10, 1010);
+
+-- Cidades
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (1, 'São Paulo', 12300000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (2, 'Rio de Janeiro', 6748000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (3, 'Salvador', 2886000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (4, 'Brasília', 3015000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (5, 'Belo Horizonte', 2521000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (6, 'Fortaleza', 2686000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (7, 'Curitiba', 1948000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (8, 'Recife', 1653000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (9, 'Porto Alegre', 1488000.0);
+
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (10, 'Manaus', 2219000.0);
+
+-- Cidade extra para testar a Questao 16 e 23 (Cidades que nunca tiveram voos)
+INSERT INTO cidades (codigo, nome, populacao) 
+VALUES (11, 'Irecê', 74000.0);
